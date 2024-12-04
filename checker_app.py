@@ -8,7 +8,7 @@ load_dotenv()
 # Constants
 GITHUB_REPO = "ManyDaughters/RT_uploads"
 DIRECTORY_PATH = "do-files"
-DOWNLOAD_DIR = "RT_StataCode"  # Local directory to store downloaded files
+DOWNLOAD_DIR = "RT_StataUploads/code"  # Local directory to store downloaded files
 MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Make sure this line correctly retrieves the token
 
 # Create a local download directory if it doesn't exist
