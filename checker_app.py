@@ -1,10 +1,12 @@
 import requests
 import os
 
+
 # Constants
 GITHUB_REPO = "ManyDaughters/RT_uploads"
 DIRECTORY_PATH = "do-files"
 DOWNLOAD_DIR = "RT_StataCode"  # Local directory to store downloaded files
+MD_PAT = os.getenv('GITHUB_PAT')  # Load token from environment variable
 
 # Create a local download directory if it doesn't exist
 if not os.path.exists(DOWNLOAD_DIR):
@@ -13,8 +15,16 @@ if not os.path.exists(DOWNLOAD_DIR):
 # Function to get the contents of the specified directory in the GitHub repo
 def get_github_files(repo, directory):
     url = f"https://api.github.com/repos/{repo}/contents/{directory}"
-    response = requests.get(url)
-    return response.json()
+    headers = {
+        'Authorization': f'token {MD_PAT}',  # Adding the header for authentication
+    }
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Error: {response.status_code}, {response.json()}")
+        return []
 
 # Function to download a file from GitHub
 def download_file(url, file_name):
