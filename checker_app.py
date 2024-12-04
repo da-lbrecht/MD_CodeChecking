@@ -46,6 +46,8 @@ def execute_stata_do_file(file_path):
     try:
         subprocess.run(["stata-se", "-b", "do", file_path], check=True)
         print(f"Executed {file_path} successfully.")
+    except FileNotFoundError:
+        print("Error: Stata executable not found. Please ensure Stata is installed and in your system PATH.")
     except subprocess.CalledProcessError as e:
         print(f"Error executing {file_path}: {e}")
 
