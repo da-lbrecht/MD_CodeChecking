@@ -1,0 +1,21 @@
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+# Ignore virtual environment
+venv/
+env/
+
+# Ignore .env file
+.env
+
+# Ignore other sensitive files
+*.log
+*.sqlite3
+README_private.md
+
+# Ignore compiled files
+*.pyc
+
+
+
