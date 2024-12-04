@@ -1,6 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
+import subprocess
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -14,6 +15,12 @@ MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Make sure this line correctly 
 # Create a local download directory if it doesn't exist
 if not os.path.exists(DOWNLOAD_DIR):
     os.makedirs(DOWNLOAD_DIR)
+
+EXECUTED_DIR = os.path.join(DOWNLOAD_DIR, "lib")  # Subfolder for executed files
+
+# Create the executed files directory if it doesn't exist
+if not os.path.exists(EXECUTED_DIR):
+    os.makedirs(EXECUTED_DIR)
 
 # Function to get the contents of the specified directory in the GitHub repo
 def get_github_files(repo, directory):
@@ -35,7 +42,20 @@ def download_file(url, file_name):
     with open(os.path.join(DOWNLOAD_DIR, file_name), 'wb') as f:
         f.write(response.content)
 
-def main():
+def execute_stata_do_file(file_path):
+    try:
+        subprocess.run(["stata-se", "-b", "do", file_path], check=True)
+        print(f"Executed {file_path} successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing {file_path}: {e}")
+
+def move_file_to_executed(file_path):
+    file_name = os.path.basename(file_path)
+    new_path = os.path.join(EXECUTED_DIR, file_name)
+    os.rename(file_path, new_path)
+    print(f"Moved {file_name} to {EXECUTED_DIR}")
+
+def download_files():
     try:
         files = get_github_files(GITHUB_REPO, DIRECTORY_PATH)
         
@@ -56,5 +76,19 @@ def main():
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def execute_files():
+    try:
+        for file_name in os.listdir(DOWNLOAD_DIR):
+            local_file_path = os.path.join(DOWNLOAD_DIR, file_name)
+            if file_name.endswith('.do'):
+                execute_stata_do_file(local_file_path)
+                move_file_to_executed(local_file_path)
+                
+        print("Execution complete.")
+        
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 if __name__ == "__main__":
-    main()
+    download_files()
+    execute_files()
