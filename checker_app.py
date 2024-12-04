@@ -2,6 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 import subprocess
+import time  # Import the built-in time module
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -9,8 +10,11 @@ load_dotenv()
 # Constants
 GITHUB_REPO = "ManyDaughters/RT_uploads"
 DIRECTORY_PATH = "do-files"
+ROOT_DIR = "."
 DOWNLOAD_DIR = "ManyDaughters_RT_AnalysisPackage/code"  # Local directory to store downloaded files
+LOG_DIR = "ManyDaughters_RT_AnalysisPackage/log"  # Local directory to store log files
 MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Make sure this line correctly retrieves the token
+STATA_EXECUTABLE = "M:/applications/STATA17/StataMP-64.exe"
 
 # Create a local download directory if it doesn't exist
 if not os.path.exists(DOWNLOAD_DIR):
@@ -21,6 +25,10 @@ EXECUTED_DIR = os.path.join(DOWNLOAD_DIR, "lib")  # Subfolder for executed files
 # Create the executed files directory if it doesn't exist
 if not os.path.exists(EXECUTED_DIR):
     os.makedirs(EXECUTED_DIR)
+
+# Create the log files directory if it doesn't exist
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
 
 # Function to get the contents of the specified directory in the GitHub repo
 def get_github_files(repo, directory):
@@ -42,12 +50,23 @@ def download_file(url, file_name):
     with open(os.path.join(DOWNLOAD_DIR, file_name), 'wb') as f:
         f.write(response.content)
 
+def move_log_file(file_path):
+    log_file_name = os.path.basename(file_path).replace('.do', '.log')
+    original_log_file = os.path.join(ROOT_DIR, log_file_name)
+    new_log_file = os.path.join(LOG_DIR, log_file_name)
+    if os.path.exists(original_log_file):
+        os.rename(original_log_file, new_log_file)
+        print(f"Moved log file to {new_log_file}")
+    else:
+        print(f"Log file {original_log_file} not found.")
+
 def execute_stata_do_file(file_path):
     try:
-        subprocess.run(["stata-se", "-b", "do", file_path], check=True)
+        result = subprocess.run([STATA_EXECUTABLE, "-e", "do", file_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print(f"Executed {file_path} successfully.")
+        move_log_file(file_path)
     except FileNotFoundError:
-        print("Error: Stata executable not found. Please ensure Stata is installed and in your system PATH.")
+        print(f"Error: Stata executable not found at {STATA_EXECUTABLE}. Please ensure the path is correct.")
     except subprocess.CalledProcessError as e:
         print(f"Error executing {file_path}: {e}")
 
