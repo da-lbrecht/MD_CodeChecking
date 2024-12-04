@@ -6,7 +6,7 @@ import os
 GITHUB_REPO = "ManyDaughters/RT_uploads"
 DIRECTORY_PATH = "do-files"
 DOWNLOAD_DIR = "RT_StataCode"  # Local directory to store downloaded files
-MD_PAT = os.getenv('GITHUB_PAT')  # Load token from environment variable
+MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Load token from environment variable
 
 # Create a local download directory if it doesn't exist
 if not os.path.exists(DOWNLOAD_DIR):
