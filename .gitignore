@@ -17,7 +17,7 @@ README_private.md
 # Ignore compiled files
 *.pyc
 
-# Ignore RT_StataUploads
-RT_StataUploads/
+# Ignore ManyDaughters_RT_AnalysisPackage
+ManyDaughters_RT_AnalysisPackage/
 
 
