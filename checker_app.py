@@ -2,12 +2,14 @@ import requests
 import os
 from dotenv import load_dotenv
 
+# Load environment variables from the .env file
+load_dotenv()
 
 # Constants
 GITHUB_REPO = "ManyDaughters/RT_uploads"
 DIRECTORY_PATH = "do-files"
 DOWNLOAD_DIR = "RT_StataCode"  # Local directory to store downloaded files
-MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Load token from environment variable
+MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Make sure this line correctly retrieves the token
 
 # Create a local download directory if it doesn't exist
 if not os.path.exists(DOWNLOAD_DIR):
