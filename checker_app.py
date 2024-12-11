@@ -15,6 +15,7 @@ DOWNLOAD_DIR = "ManyDaughters_RT_AnalysisPackage/code"  # Local directory to sto
 LOG_DIR = "ManyDaughters_RT_AnalysisPackage/log"  # Local directory to store log files
 MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Make sure this line correctly retrieves the token
 STATA_EXECUTABLE = "M:/applications/STATA17/StataMP-64.exe"
+ANALYSIS_PACKAGE_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage")  # Relative path inside ROOT_DIR
 
 # Create a local download directory if it doesn't exist
 if not os.path.exists(DOWNLOAD_DIR):
@@ -52,7 +53,7 @@ def download_file(url, file_name):
 
 def move_log_file(file_path):
     log_file_name = os.path.basename(file_path).replace('.do', '.log')
-    original_log_file = os.path.join(ROOT_DIR, log_file_name)
+    original_log_file = os.path.join(ANALYSIS_PACKAGE_DIR, log_file_name)  # Ensure correct path
     new_log_file = os.path.join(LOG_DIR, log_file_name)
     if os.path.exists(original_log_file):
         os.rename(original_log_file, new_log_file)
@@ -61,14 +62,18 @@ def move_log_file(file_path):
         print(f"Log file {original_log_file} not found.")
 
 def execute_stata_do_file(file_path):
+    original_dir = os.getcwd()
     try:
-        result = subprocess.run([STATA_EXECUTABLE, "-e", "do", file_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        os.chdir(ANALYSIS_PACKAGE_DIR)
+        if not os.path.exists(STATA_EXECUTABLE):
+            raise FileNotFoundError(f"Stata executable not found at {STATA_EXECUTABLE}. Please ensure the path is correct.")
+        result = subprocess.run([STATA_EXECUTABLE, "-e", "do", os.path.relpath(file_path, ANALYSIS_PACKAGE_DIR)], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print(f"Executed {file_path} successfully.")
-        move_log_file(file_path)
-    except FileNotFoundError:
-        print(f"Error: Stata executable not found at {STATA_EXECUTABLE}. Please ensure the path is correct.")
     except subprocess.CalledProcessError as e:
         print(f"Error executing {file_path}: {e}")
+    finally:
+        os.chdir(original_dir)
+        move_log_file(file_path)
 
 def move_file_to_executed(file_path):
     file_name = os.path.basename(file_path)

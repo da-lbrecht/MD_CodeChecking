@@ -8,7 +8,7 @@ def process_log_file(input_path, output_path):
     
     for i in range(len(lines)):
         if "r(" in lines[i]:
-            error_lines.append(str(i + 7))
+            error_lines.append(str(i + 8))
     
     if error_lines:
         error_message = f"ATTENTION: RUNNING YOUR do-file PRODUCES ERRORS, see lines {', '.join(error_lines)}.\n"
