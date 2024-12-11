@@ -84,9 +84,10 @@ def download_files():
             file_name = file['name']
             file_download_url = file['download_url']
             
-            # Check if the file already exists in the local directory
+            # Check if the file already exists in the local directory or executed directory
             local_file_path = os.path.join(DOWNLOAD_DIR, file_name)
-            if not os.path.exists(local_file_path):
+            executed_file_path = os.path.join(EXECUTED_DIR, file_name)
+            if not os.path.exists(local_file_path) and not os.path.exists(executed_file_path):
                 print(f"Downloading {file_name}...")
                 download_file(file_download_url, file_name)
             else:
