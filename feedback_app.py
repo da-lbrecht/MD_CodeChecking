@@ -5,25 +5,35 @@ def process_log_file(input_path, output_path):
         lines = infile.readlines()
     
     error_lines = []
-    result_lines = [
-        '\n',
-        'This is the log-file generated when running your do-file on the 95%-sample of the SOEP data.\n',
-        'All output has been censored.\n',
-        '\n',
-        'We have spotted error messages in lines\n',
-        '\n'
-    ] + ['\n'] * (len(lines) + 1)  # Initialize with blank lines after the first 5 lines
     
     for i in range(len(lines)):
-        if lines[i].startswith(". *") or "r(" in lines[i]:
-            if "r(" in lines[i]:
-                error_lines.append(str(i + 1))
-            start_index = max(0, i - 3)
-            for j in range(start_index, i + 1):
-                if j + 6 < len(result_lines):
-                    result_lines[j + 6] = lines[j]  # Offset by 6 to account for the added lines
+        if "r(" in lines[i]:
+            error_lines.append(str(i + 7))
     
-    result_lines[4] = 'We have spotted error messages in lines ' + ', '.join(error_lines) + '\n'
+    if error_lines:
+        error_message = f"ATTENTION: RUNNING YOUR do-file PRODUCES ERRORS, see lines {', '.join(error_lines)}.\n"
+    else:
+        error_message = "Your do-file runs without errors.\n"
+    
+    intro_lines = [
+        "\n",
+        "This is the log-file generated when running your do-file with the 95%-sample of the SOEP data.\n",
+        "\n",
+        "All output has been censored. Commented lines, and passages that produce an error message are still visible.\n",
+        "\n",
+        error_message,
+        '\n'
+    ]
+    
+    result_lines = intro_lines + lines[:24]  # Add intro lines and keep the first 24 lines as is
+    
+    for i in range(24, len(lines)):
+        if lines[i].startswith(". *") or "r(" in lines[i] or \
+           (i + 1 < len(lines) and "r(" in lines[i + 1]) or \
+           (i + 2 < len(lines) and "r(" in lines[i + 2]):
+            result_lines.append(lines[i])
+        else:
+            result_lines.append('\n')  # Blank the line
     
     with open(output_path, 'w') as outfile:
         outfile.writelines(result_lines)
