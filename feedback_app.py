@@ -37,6 +37,15 @@ def process_log_file(input_path, output_path):
     
     with open(output_path, 'w') as outfile:
         outfile.writelines(result_lines)
+    print(f"Created censored log file: {output_path}")
+
+def move_log_file_to_lib(log_file_path):
+    lib_dir = os.path.join(os.path.dirname(log_file_path), 'lib')
+    if not os.path.exists(lib_dir):
+        os.makedirs(lib_dir)
+    new_path = os.path.join(lib_dir, os.path.basename(log_file_path))
+    os.rename(log_file_path, new_path)
+    print(f"Moved {log_file_path} to {new_path}")
 
 def main():
     log_dir = 'ManyDaughters_RT_AnalysisPackage/log'
@@ -49,6 +58,7 @@ def main():
             output_filename = filename.replace('.log', '_censored.log')
             output_path = os.path.join(censored_dir, output_filename)
             process_log_file(input_path, output_path)
+            move_log_file_to_lib(input_path)
 
 if __name__ == "__main__":
     main()
