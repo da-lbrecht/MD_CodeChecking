@@ -20,7 +20,7 @@ STATA_EXECUTABLE = "M:/applications/STATA17/StataMP-64.exe"
 if not os.path.exists(DOWNLOAD_DIR):
     os.makedirs(DOWNLOAD_DIR)
 
-EXECUTED_DIR = os.path.join(DOWNLOAD_DIR, "lib")  # Subfolder for executed files
+EXECUTED_DIR = os.path.join(DOWNLOAD_DIR, "checked")  # Subfolder for executed files
 
 # Create the executed files directory if it doesn't exist
 if not os.path.exists(EXECUTED_DIR):
