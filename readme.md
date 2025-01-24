@@ -1,7 +1,7 @@
 # ManyDaughters Code Checking
 
 ## Project Description
-This project is designed to automate the process of downloading, executing STATA do-files, and uploading log files for the ManyDaughters RT Analysis Package. It consists of three main applications: checker_app.py, feedback_app.py, and upload_app.py.
+This project is designed to automate the process of downloading and executing STATA do-files, and uploading corresponding log files for the ManyDaughters RT Analysis Package. It consists of three main applications: checker_app.py, feedback_app.py, and upload_app.py.
 
 ## Project Structure
 .env
