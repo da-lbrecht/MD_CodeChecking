@@ -66,13 +66,6 @@ venv/
     ```
     GITHUB_ManyDaughters_PAT=your_github_personal_access_token
     ```
-
-## Installation
-To install the necessary dependencies for this project, run the following command:
-```bash
-pip install -r requirements.txt
-```
-
 ## Applications
 
 ### Checker App (`checker_app.py`)
