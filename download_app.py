@@ -1,4 +1,4 @@
-import requests
+import boto3
 import os
 from dotenv import load_dotenv
 
@@ -6,10 +6,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Constants
-GITHUB_REPO = "ManyDaughters/RT_uploads"
-DIRECTORY_PATH = "do-files"
+S3_BUCKET = "many-daughters"
+S3_DIRECTORY_PATH = "stata/codes"
 DOWNLOAD_DIR = "ManyDaughters_RT_AnalysisPackage/code"  # Local directory to store downloaded files
-MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Make sure this line correctly retrieves the token
+S3_ACCESS_KEY_ID = os.getenv('S3_Access_Key_ID')  # Correctly retrieve the access key ID
+S3_SECRET_ACCESS_KEY = os.getenv('S3_Secret_Access_Key')  # Correctly retrieve the secret access key
 
 # Create a local download directory if it doesn't exist
 if not os.path.exists(DOWNLOAD_DIR):
@@ -21,40 +22,53 @@ EXECUTED_DIR = os.path.join(DOWNLOAD_DIR, "checked")  # Subfolder for executed f
 if not os.path.exists(EXECUTED_DIR):
     os.makedirs(EXECUTED_DIR)
 
-# Function to get the contents of the specified directory in the GitHub repo
-def get_github_files(repo, directory):
-    url = f"https://api.github.com/repos/{repo}/contents/{directory}"
-    headers = {
-        'Authorization': f'token {MD_PAT}',  # Adding the header for authentication
-    }
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Error: {response.status_code}, {response.json()}")
+# Initialize S3 client
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=S3_ACCESS_KEY_ID,
+    aws_secret_access_key=S3_SECRET_ACCESS_KEY,
+    region_name='us-east-1'
+)
+
+# Function to list files in the specified S3 directory
+def list_s3_files(bucket, directory):
+    try:
+        response = s3_client.list_objects_v2(Bucket=bucket, Prefix=directory)
+        if 'Contents' in response:
+            return [item['Key'] for item in response['Contents']]
+        else:
+            return []
+    except Exception as e:
+        print(f"An error occurred while listing files: {e}")
         return []
 
-# Function to download a file from GitHub
-def download_file(url, file_name):
-    response = requests.get(url)
-    with open(os.path.join(DOWNLOAD_DIR, file_name), 'wb') as f:
-        f.write(response.content)
+# Function to download a file from S3
+def download_file_from_s3(bucket, key, download_path):
+    try:
+        s3_client.download_file(bucket, key, download_path)
+    except s3_client.exceptions.NoSuchKey:
+        print(f"The specified key does not exist: {key}")
+    except s3_client.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == '403':
+            print(f"Access denied for key: {key}")
+        else:
+            print(f"An error occurred while downloading {key}: {e}")
+    except Exception as e:
+        print(f"An error occurred while downloading {key}: {e}")
 
 def download_files():
     try:
-        files = get_github_files(GITHUB_REPO, DIRECTORY_PATH)
+        files = list_s3_files(S3_BUCKET, S3_DIRECTORY_PATH)
         
-        for file in files:
-            file_name = file['name']
-            file_download_url = file['download_url']
+        for file_key in files:
+            file_name = os.path.basename(file_key)
             
             # Check if the file already exists in the local directory or executed directory
             local_file_path = os.path.join(DOWNLOAD_DIR, file_name)
             executed_file_path = os.path.join(EXECUTED_DIR, file_name)
             if not os.path.exists(local_file_path) and not os.path.exists(executed_file_path):
-                print(f"Downloading {file_name}...")
-                download_file(file_download_url, file_name)
+                print(f"Downloading {file_name} from S3...")
+                download_file_from_s3(S3_BUCKET, file_key, local_file_path)
             else:
                 print(f"{file_name} already exists. Skipping download.")
 
