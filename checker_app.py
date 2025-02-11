@@ -1,25 +1,16 @@
-import requests
 import os
-from dotenv import load_dotenv
 import subprocess
-import time  # Import the built-in time module
+from dotenv import load_dotenv
 
 # Load environment variables from the .env file
 load_dotenv()
 
 # Constants
-GITHUB_REPO = "ManyDaughters/RT_uploads"
-DIRECTORY_PATH = "do-files"
 ROOT_DIR = "."
 DOWNLOAD_DIR = "ManyDaughters_RT_AnalysisPackage/code"  # Local directory to store downloaded files
 LOG_DIR = "ManyDaughters_RT_AnalysisPackage/log"  # Local directory to store log files
-MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Make sure this line correctly retrieves the token
 STATA_EXECUTABLE = "M:/applications/STATA17/StataMP-64.exe"
 ANALYSIS_PACKAGE_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage")  # Relative path inside ROOT_DIR
-
-# Create a local download directory if it doesn't exist
-if not os.path.exists(DOWNLOAD_DIR):
-    os.makedirs(DOWNLOAD_DIR)
 
 EXECUTED_DIR = os.path.join(DOWNLOAD_DIR, "checked")  # Subfolder for executed files
 
@@ -30,26 +21,6 @@ if not os.path.exists(EXECUTED_DIR):
 # Create the log files directory if it doesn't exist
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
-
-# Function to get the contents of the specified directory in the GitHub repo
-def get_github_files(repo, directory):
-    url = f"https://api.github.com/repos/{repo}/contents/{directory}"
-    headers = {
-        'Authorization': f'token {MD_PAT}',  # Adding the header for authentication
-    }
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Error: {response.status_code}, {response.json()}")
-        return []
-
-# Function to download a file from GitHub
-def download_file(url, file_name):
-    response = requests.get(url)
-    with open(os.path.join(DOWNLOAD_DIR, file_name), 'wb') as f:
-        f.write(response.content)
 
 def move_log_file(file_path):
     log_file_name = os.path.basename(file_path).replace('.do', '.log')
@@ -81,28 +52,6 @@ def move_file_to_executed(file_path):
     os.rename(file_path, new_path)
     print(f"Moved {file_name} to {EXECUTED_DIR}")
 
-def download_files():
-    try:
-        files = get_github_files(GITHUB_REPO, DIRECTORY_PATH)
-        
-        for file in files:
-            file_name = file['name']
-            file_download_url = file['download_url']
-            
-            # Check if the file already exists in the local directory or executed directory
-            local_file_path = os.path.join(DOWNLOAD_DIR, file_name)
-            executed_file_path = os.path.join(EXECUTED_DIR, file_name)
-            if not os.path.exists(local_file_path) and not os.path.exists(executed_file_path):
-                print(f"Downloading {file_name}...")
-                download_file(file_download_url, file_name)
-            else:
-                print(f"{file_name} already exists. Skipping download.")
-
-        print("Download complete.")
-        
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
 def execute_files():
     try:
         for file_name in os.listdir(DOWNLOAD_DIR):
@@ -117,5 +66,4 @@ def execute_files():
         print(f"An error occurred: {e}")
 
 if __name__ == "__main__":
-    download_files()
     execute_files()
