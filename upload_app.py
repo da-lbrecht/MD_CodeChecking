@@ -1,6 +1,7 @@
 import os
 import base64
 import requests
+import boto3
 from dotenv import load_dotenv
 
 # Load environment variables from the .env file
@@ -20,30 +21,21 @@ UPLOADED_DIR = os.path.join(LOG_DIR, 'uploaded')
 if not os.path.exists(UPLOADED_DIR):
     os.makedirs(UPLOADED_DIR)
 
-def upload_file_to_github(file_path, repo, directory):
-    file_name = os.path.basename(file_path)
-    url = f"https://api.github.com/repos/{repo}/contents/{directory}/{file_name}"
-    headers = {
-        'Authorization': f'token {MD_PAT}',
-        'Content-Type': 'application/json'
-    }
+def upload_to_s3(file_path):
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=os.getenv('S3_Access_Key_ID'),
+        aws_secret_access_key=os.getenv('S3_Secret_Access_Key'),
+        region_name='us-east-1'
+    )
+    bucket_name = 'many-daughters'
+    s3_key = f'stata/results/{os.path.basename(file_path)}'
     
-    with open(file_path, 'rb') as f:
-        content = f.read()
-    
-    data = {
-        "message": f"Upload {file_name}",
-        "content": base64.b64encode(content).decode('utf-8')  # Encode file content to base64
-    }
-    
-    response = requests.put(url, headers=headers, json=data)
-    
-    if response.status_code == 201:
-        print(f"Uploaded {file_name} successfully.")
-        return True
-    else:
-        print(f"Failed to upload {file_name}. Status code: {response.status_code}, Response: {response.json()}")
-        return False
+    try:
+        s3.upload_file(file_path, bucket_name, s3_key)
+        print(f"File {file_path} uploaded to {bucket_name}/{s3_key}")
+    except Exception as e:
+        print(f"Error uploading file: {e}")
 
 def move_file_to_uploaded(file_path):
     file_name = os.path.basename(file_path)
@@ -55,8 +47,8 @@ def upload_files():
     for filename in os.listdir(CENSORED_DIR):
         if filename.endswith('.log'):
             file_path = os.path.join(CENSORED_DIR, filename)
-            if upload_file_to_github(file_path, GITHUB_REPO, DIRECTORY_PATH):
-                move_file_to_uploaded(file_path)
+            upload_to_s3(file_path)
+            move_file_to_uploaded(file_path)
 
 if __name__ == "__main__":
     upload_files()
