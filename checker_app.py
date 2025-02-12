@@ -6,9 +6,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Constants
-ROOT_DIR = "."
-DOWNLOAD_DIR = "ManyDaughters_RT_AnalysisPackage/code"  # Local directory to store downloaded files
-LOG_DIR = "ManyDaughters_RT_AnalysisPackage/log"  # Local directory to store log files
+ROOT_DIR = os.path.abspath(".")
+DOWNLOAD_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "code")  # Local directory to store downloaded files
+LOG_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "log")  # Local directory to store log files
+CSV_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "out")  # Local directory to store results
 STATA_EXECUTABLE = "M:/applications/STATA17/StataMP-64.exe"
 ANALYSIS_PACKAGE_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage")  # Relative path inside ROOT_DIR
 
@@ -32,14 +33,26 @@ def move_log_file(file_path):
     else:
         print(f"Log file {original_log_file} not found.")
 
+def rename_csv_file(do_file_name):
+    if not os.path.exists(CSV_DIR):
+        print(f"CSV directory {CSV_DIR} not found.")
+        return
+    for file_name in os.listdir(CSV_DIR):
+        if file_name.startswith("hypothesis-") and "_results.csv" in file_name:
+            new_file_name = f"{do_file_name}_{file_name}"
+            os.rename(os.path.join(CSV_DIR, file_name), os.path.join(CSV_DIR, new_file_name))
+            print(f"Renamed {file_name} to {new_file_name}")
+
 def execute_stata_do_file(file_path):
     original_dir = os.getcwd()
     try:
         os.chdir(ANALYSIS_PACKAGE_DIR)
         if not os.path.exists(STATA_EXECUTABLE):
             raise FileNotFoundError(f"Stata executable not found at {STATA_EXECUTABLE}. Please ensure the path is correct.")
+        do_file_name = os.path.basename(file_path)[:-6]  # Remove last 6 characters from the do-file name
         result = subprocess.run([STATA_EXECUTABLE, "-e", "do", os.path.relpath(file_path, ANALYSIS_PACKAGE_DIR)], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print(f"Executed {file_path} successfully.")
+        rename_csv_file(do_file_name)
     except subprocess.CalledProcessError as e:
         print(f"Error executing {file_path}: {e}")
     finally:
