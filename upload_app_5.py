@@ -8,11 +8,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Constants
-GITHUB_REPO = "ManyDaughters/RT_uploads"
-DIRECTORY_PATH = "log-files"
 ROOT_DIR = "."
 LOG_DIR = "ManyDaughters_RT_AnalysisPackage/log"  # Local directory to store log files
-MD_PAT = os.getenv('GITHUB_ManyDaughters_PAT')  # Make sure this line correctly retrieves the token
+RESULTS_DIR = "ManyDaughters_RT_AnalysisPackage/out/checked" # Local directory of stored results from computational reproducibility check
 
 CENSORED_DIR = os.path.join(LOG_DIR, 'censored')
 UPLOADED_DIR = os.path.join(LOG_DIR, 'uploaded')
@@ -44,9 +42,17 @@ def move_file_to_uploaded(file_path):
     print(f"Moved {file_name} to {UPLOADED_DIR}")
 
 def upload_files():
-    for filename in os.listdir(CENSORED_DIR):
+    # Upload log files
+    for filename in os.listdir(LOG_DIR):
         if filename.endswith('.log'):
-            file_path = os.path.join(CENSORED_DIR, filename)
+            file_path = os.path.join(LOG_DIR, filename)
+            upload_to_s3(file_path)
+            move_file_to_uploaded(file_path)
+    
+    # Upload result files
+    for filename in os.listdir(RESULTS_DIR):
+        if filename.endswith('.csv'):
+            file_path = os.path.join(RESULTS_DIR, filename)
             upload_to_s3(file_path)
             move_file_to_uploaded(file_path)
 
