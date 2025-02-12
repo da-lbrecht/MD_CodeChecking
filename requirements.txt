@@ -2,3 +2,4 @@ requests
 python-dotenv
 pywinauto
 boto3
+pandas
