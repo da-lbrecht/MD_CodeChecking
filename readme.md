@@ -71,7 +71,7 @@ venv/
 
 ### Download App (`download_app.py`)
 
-This application downloads `.do` files from a specified GitHub repository.
+This application downloads `.do` files from a specified AWS S3 bucket.
 
 #### Usage
 
@@ -101,7 +101,7 @@ python feedback_app.py
 
 ### Upload App (`upload_app.py`)
 
-This application uploads the processed log files to a specified GitHub repository.
+This application uploads the processed log files to a specified AWS S3 bucket.
 
 #### Usage
 
