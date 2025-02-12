@@ -37,6 +37,14 @@ def find_matching_pairs():
                 matching_pairs.append((repro_file_path, orig_file_path))
     return matching_pairs
 
+def move_files_to_checked(files, source_dir):
+    checked_dir = os.path.join(source_dir, "checked")
+    if not os.path.exists(checked_dir):
+        os.makedirs(checked_dir)
+    for file in files:
+        os.rename(os.path.join(source_dir, file), os.path.join(checked_dir, file))
+        print(f"Moved {file} to {checked_dir}")
+
 def main():
     matching_pairs = find_matching_pairs()
     results = []
@@ -56,10 +64,30 @@ def main():
 
     print(f"Total number of matched files: {len(matching_pairs)}")
 
+    # Load existing results if the file exists
+    results_file_path = os.path.join(CHECK_RESULTS_DIR, "repro_check.csv")
+    if os.path.exists(results_file_path):
+        existing_results_df = pd.read_csv(results_file_path)
+        start_id = existing_results_df['ID'].max() + 1
+        results_df = pd.DataFrame(results)
+        results_df.reset_index(inplace=True)
+        results_df['ID'] = results_df.index + start_id
+        combined_results_df = pd.concat([existing_results_df, results_df], ignore_index=True)
+    else:
+        results_df = pd.DataFrame(results)
+        results_df.reset_index(inplace=True)
+        results_df.rename(columns={'index': 'ID'}, inplace=True)
+        combined_results_df = results_df
+
     # Save the results to a CSV file
-    results_df = pd.DataFrame(results)
-    results_df.to_csv(os.path.join(CHECK_RESULTS_DIR, "repro_check.csv"), index=False)
-    print(f"Reproducibility check results saved to {os.path.join(CHECK_RESULTS_DIR, 'repro_check.csv')}")
+    combined_results_df.to_csv(results_file_path, index=False)
+    print(f"Reproducibility check results saved to {results_file_path}")
+
+    # Move files to the "checked" subfolder
+    repro_files = [os.path.basename(pair[0]) for pair in matching_pairs]
+    orig_files = [os.path.basename(pair[1]) for pair in matching_pairs]
+    move_files_to_checked(repro_files, CSV_DIR)
+    move_files_to_checked(orig_files, ORIG_RESULTS_DIR)
 
 if __name__ == "__main__":
     main()
