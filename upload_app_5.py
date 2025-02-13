@@ -42,17 +42,9 @@ def move_file_to_uploaded(file_path):
     print(f"Moved {file_name} to {UPLOADED_DIR}")
 
 def upload_files():
-    # Upload log files
-    for filename in os.listdir(LOG_DIR):
+    for filename in os.listdir(CENSORED_DIR):
         if filename.endswith('.log'):
-            file_path = os.path.join(LOG_DIR, filename)
-            upload_to_s3(file_path)
-            move_file_to_uploaded(file_path)
-    
-    # Upload result files
-    for filename in os.listdir(RESULTS_DIR):
-        if filename.endswith('.csv'):
-            file_path = os.path.join(RESULTS_DIR, filename)
+            file_path = os.path.join(CENSORED_DIR, filename)
             upload_to_s3(file_path)
             move_file_to_uploaded(file_path)
 
