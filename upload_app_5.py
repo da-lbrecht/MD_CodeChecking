@@ -81,7 +81,7 @@ def upload_files():
             file_path = os.path.join(RESULTS_DIR, filename)
             s3_key = f'stata/results/{filename}'
             upload_to_s3(file_path, s3_key)
-            move_file_to_uploaded(file_path, UPLOADED_LOG_DIR)
+            move_file_to_uploaded(file_path, UPLOADED_RESULTS_DIR)
     
     # Upload summary JSON files
     for filename in os.listdir(SUMMARY_DIR):
