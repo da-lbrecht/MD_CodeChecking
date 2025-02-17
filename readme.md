@@ -1,9 +1,10 @@
 # ManyDaughters Code Checking
 
 ## Project Description
-This project is designed to automate the process of downloading and executing STATA do-files, in order to check for potential errors during exectution and for computational reproducibility of analysis results, and provides feedback by uploading checking results and logfiles to an AWS bucket. It consists of twelve main applications: download_app_5.py, stata_runner_app_5.py, repro_checker_app_5.py, log_process_app_5.py, upload_app_5.py, download_app_95.py, stata_runner_app_95.py, repro_checker_app_95.py, log_process_app_95.py, censoring_app_95.py, feedback_app.py, and upload_app_95.py.
+This project is designed to automate the process of downloading and executing STATA do-files, in order to check for potential errors during execution and for computational reproducibility of analysis results, and provides feedback by uploading checking results and logfiles to an AWS bucket. It consists of twelve main applications: download_app_5.py, stata_runner_app_5.py, repro_checker_app_5.py, log_process_app_5.py, upload_app_5.py, download_app_95.py, stata_runner_app_95.py, repro_checker_app_95.py, log_process_app_95.py, censoring_app_95.py, feedback_app.py, and upload_app_95.py.
 
 ## Project Structure
+```
 .env
 .gitignore
 download_app_5.py
@@ -62,6 +63,7 @@ venv/
         pip.exe
         pip3.13.exe
         pip3.exe
+```
 
 ## Prerequisites
 
