@@ -17,15 +17,15 @@ def process_log_file(input_path, output_path):
     
     intro_lines = [
         "\n",
-        "This is the log-file generated when running your do-file with the 95%-sample of the SOEP data.\n",
+        "This is the log-file generated when running your do-file with the 5%-sample of the SOEP data.\n",
         "\n",
-        "All output has been censored. Commented lines, and passages that produce an error message are still visible.\n",
+        "\n",
         "\n",
         error_message,
         '\n'
     ]
     
-    result_lines = intro_lines + lines[:24]  # Add intro lines and keep the first 24 lines as is
+    result_lines = intro_lines + lines  # Add intro lines and keep all subsequent lines as is
 
     with open(output_path, 'w') as outfile:
         outfile.writelines(result_lines)
