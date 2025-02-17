@@ -43,26 +43,6 @@ ManyDaughters_PC_AnalysisPackage_95/
         lib/
         uploaded/
 requirements.txt
-RT Credentials.csv
-venv/
-    Include/
-    Lib/
-        site-packages/
-    pyvenv.cfg
-    README_private.md
-    Scripts/
-        __pycache__/
-        activate
-        activate.bat
-        activate.fish
-        Activate.ps1
-        clear_comtypes_cache.exe
-        deactivate.bat
-        dotenv.exe
-        normalizer.exe
-        pip.exe
-        pip3.13.exe
-        pip3.exe
 ```
 
 ## Prerequisites
