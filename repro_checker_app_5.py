@@ -1,15 +1,17 @@
 import os
 import pandas as pd
+import json
 
 # Constants
 ROOT_DIR = os.path.abspath(".")
 CSV_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "out")  # Local directory where results from the reproduction check are stored
 ORIG_RESULTS_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "results")  # Local directory where submitted results are stored
-CHECK_RESULTS_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "repro_check")  # Local directory to store results of computational reproducibility check
+LOG_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "log", "processed")  # Local directory to store processed log files
+SUMMARY_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "summary")  # Local directory to store summary JSON files
 
-# Ensure the check results directory exists
-if not os.path.exists(CHECK_RESULTS_DIR):
-    os.makedirs(CHECK_RESULTS_DIR)
+# Ensure the summary directory exists
+if not os.path.exists(SUMMARY_DIR):
+    os.makedirs(SUMMARY_DIR)
 
 def compare_csv(file1, file2):
     # Read the CSV files
@@ -37,6 +39,17 @@ def find_matching_pairs():
                 matching_pairs.append((repro_file_path, orig_file_path))
     return matching_pairs
 
+def check_log_file(log_file_name):
+    log_file_path = os.path.join(LOG_DIR, log_file_name)
+    if os.path.exists(log_file_path):
+        with open(log_file_path, 'r') as log_file:
+            lines = log_file.readlines()
+            if len(lines) > 5 and "Your do-file runs without errors." in lines[5]:
+                return True
+            else:
+                return False
+    return None
+
 def move_files_to_checked(files, source_dir):
     checked_dir = os.path.join(source_dir, "checked")
     if not os.path.exists(checked_dir):
@@ -62,26 +75,28 @@ def main():
         result.update(comparison_results)
         results.append(result)
 
+        # Check log file for errors
+        log_file_name = orig_file_name.replace("_results.csv", "_5%.log")
+        succeeded_for_5_percent = check_log_file(log_file_name)
+
+        # Check if the results are reproduced
+        reproduced = all(comparison_results.values())
+
+        # Create summary JSON
+        summary = {
+            "succeededFor5Percent": succeeded_for_5_percent,
+            "succeededFor95Percent": None,
+            "reproduced": reproduced
+        }
+
+        # Save summary JSON
+        summary_file_name = orig_file_name.replace("_results.csv", "_summary.json")
+        summary_file_path = os.path.join(SUMMARY_DIR, summary_file_name)
+        with open(summary_file_path, 'w') as summary_file:
+            json.dump(summary, summary_file, indent=4)
+        print(f"Summary saved to {summary_file_path}")
+
     print(f"Total number of matched files: {len(matching_pairs)}")
-
-    # Load existing results if the file exists
-    results_file_path = os.path.join(CHECK_RESULTS_DIR, "repro_check.csv")
-    if os.path.exists(results_file_path):
-        existing_results_df = pd.read_csv(results_file_path)
-        start_id = existing_results_df['ID'].max() + 1
-        results_df = pd.DataFrame(results)
-        results_df.reset_index(inplace=True)
-        results_df['ID'] = results_df.index + start_id
-        combined_results_df = pd.concat([existing_results_df, results_df], ignore_index=True)
-    else:
-        results_df = pd.DataFrame(results)
-        results_df.reset_index(inplace=True)
-        results_df.rename(columns={'index': 'ID'}, inplace=True)
-        combined_results_df = results_df
-
-    # Save the results to a CSV file
-    combined_results_df.to_csv(results_file_path, index=False)
-    print(f"Reproducibility check results saved to {results_file_path}")
 
     # Move files to the "checked" subfolder
     repro_files = [os.path.basename(pair[0]) for pair in matching_pairs]
