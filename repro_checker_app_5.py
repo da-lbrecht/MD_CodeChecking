@@ -90,7 +90,7 @@ def main():
         }
 
         # Save summary JSON
-        summary_file_name = orig_file_name.replace("_results.csv", "_summary.json")
+        summary_file_name = orig_file_name.replace("_results.csv", ".json")
         summary_file_path = os.path.join(SUMMARY_DIR, summary_file_name)
         with open(summary_file_path, 'w') as summary_file:
             json.dump(summary, summary_file, indent=4)
