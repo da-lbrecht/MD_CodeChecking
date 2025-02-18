@@ -40,16 +40,16 @@ def upload_to_s3(file_path, s3_key):
         file_name = os.path.basename(file_path)
         if file_name.endswith('_5%.log'):
             file_type = 'log5'
-            curl_command = f"curl 'https://www.manydaughters.com/api/stata?key=stata/logs/{file_name}&fileType={file_type}'"
+            curl_command = f'curl "https://www.manydaughters.com/api/stata?key=stata/logs/{file_name}&fileType={file_type}"'
         elif file_name.endswith('_95%.log'):
             file_type = 'log95'
-            curl_command = f"curl 'https://www.manydaughters.com/api/stata?key=stata/logs/{file_name}&fileType={file_type}'"
+            curl_command = f'curl "https://www.manydaughters.com/api/stata?key=stata/logs/{file_name}&fileType={file_type}"'
         elif file_name.endswith('_results.csv'):
             file_type = 'result'
-            curl_command = f"curl 'https://www.manydaughters.com/api/stata?key=stata/results/{file_name}&fileType={file_type}'"
+            curl_command = f'curl "https://www.manydaughters.com/api/stata?key=stata/results/{file_name}&fileType={file_type}"'
         elif file_name.endswith('.json'):
             file_type = 'summary'
-            curl_command = f"curl 'https://www.manydaughters.com/api/stata?key=stata/summary/{file_name}&fileType={file_type}'"
+            curl_command = f'curl "https://www.manydaughters.com/api/stata?key=stata/summary/{file_name}&fileType={file_type}"'
         else:
             file_type = None
         
