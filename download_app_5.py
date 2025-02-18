@@ -12,11 +12,18 @@ DOWNLOAD_DIRS = {
     "stata/codes": "ManyDaughters_RT_AnalysisPackage/code",
     "stata/results": "ManyDaughters_RT_AnalysisPackage/results"
 }
+CHECKED_DIRS = {
+    "stata/codes": "ManyDaughters_RT_AnalysisPackage/code/checked",
+    "stata/results": "ManyDaughters_RT_AnalysisPackage/results/checked"
+}
 S3_ACCESS_KEY_ID = os.getenv('S3_Access_Key_ID')  # Correctly retrieve the access key ID
 S3_SECRET_ACCESS_KEY = os.getenv('S3_Secret_Access_Key')  # Correctly retrieve the secret access key
 
-# Create local download directories if they don't exist
+# Create local download and checked directories if they don't exist
 for directory in DOWNLOAD_DIRS.values():
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+for directory in CHECKED_DIRS.values():
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -62,6 +69,7 @@ def download_files():
         for s3_directory_path in S3_DIRECTORY_PATHS:
             files = list_s3_files(S3_BUCKET, s3_directory_path)
             download_dir = DOWNLOAD_DIRS[s3_directory_path]
+            checked_dir = CHECKED_DIRS[s3_directory_path]
             
             for file_key in files:
                 file_name = os.path.basename(file_key)
@@ -70,9 +78,10 @@ def download_files():
                 if s3_directory_path == "stata/results" and file_name.startswith("repro"):
                     continue
                 
-                # Check if the file already exists in the local directory
+                # Check if the file already exists in the local directory or checked directory
                 local_file_path = os.path.join(download_dir, file_name)
-                if not os.path.exists(local_file_path):
+                checked_file_path = os.path.join(checked_dir, file_name)
+                if not os.path.exists(local_file_path) and not os.path.exists(checked_file_path):
                     print(f"Downloading {file_name} from S3...")
                     download_file_from_s3(S3_BUCKET, file_key, local_file_path)
                     if file_name.endswith('.do'):
