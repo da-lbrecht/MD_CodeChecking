@@ -36,25 +36,22 @@ def upload_to_s3(file_path, s3_key):
         s3.upload_file(file_path, bucket_name, s3_key)
         print(f"File {file_path} uploaded to {bucket_name}/{s3_key}")
         
-        # Determine file type for curl command
+        # Extract identifier for curl command
         file_name = os.path.basename(file_path)
         if file_name.endswith('_5%.log'):
-            file_type = 'log5'
-            curl_command = f'curl "https://www.manydaughters.com/api/stata?key=stata/logs/{file_name}&fileType={file_type}"'
+            identifier = file_name.replace('_5%.log', '')
         elif file_name.endswith('_95%.log'):
-            file_type = 'log95'
-            curl_command = f'curl "https://www.manydaughters.com/api/stata?key=stata/logs/{file_name}&fileType={file_type}"'
+            identifier = file_name.replace('_95%.log', '')
         elif file_name.endswith('_results.csv'):
-            file_type = 'result'
-            curl_command = f'curl "https://www.manydaughters.com/api/stata?key=stata/results/{file_name}&fileType={file_type}"'
+            identifier = file_name.replace('_results.csv', '')
         elif file_name.endswith('.json'):
-            file_type = 'summary'
-            curl_command = f'curl "https://www.manydaughters.com/api/stata?key=stata/summary/{file_name}&fileType={file_type}"'
+            identifier = file_name.replace('.json', '')
         else:
-            file_type = None
+            identifier = None
         
         # Execute curl command for real-time updates
-        if file_type:
+        if identifier:
+            curl_command = f'curl "https://www.manydaughters.com/api/stata?stataJob={identifier}"'
             subprocess.run(curl_command, shell=True)
             print(f"Executed curl command: {curl_command}")
     except Exception as e:
