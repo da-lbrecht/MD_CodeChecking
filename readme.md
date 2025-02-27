@@ -41,6 +41,7 @@ ManyDaughters_PC_AnalysisPackage_95/
         censored/
         lib/
         uploaded/
+summary/
 requirements.txt
 ```
 

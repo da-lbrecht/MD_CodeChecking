@@ -23,6 +23,9 @@ ManyDaughters_RT_AnalysisPackage/
 # Ignore ManyDaughters_PC_AnalysisPackage
 ManyDaughters_PC_AnalysisPackage_95/
 
+# Ignore summary of code checking results
+summary/
+
 # Ignore AWS related files for local use
 AWS_readme.md
 AWS_bucket_checker.py

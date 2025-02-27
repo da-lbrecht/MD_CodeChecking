@@ -7,7 +7,7 @@ ROOT_DIR = os.path.abspath(".")
 CSV_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "out")  # Local directory where results from the reproduction check are stored
 ORIG_RESULTS_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "results")  # Local directory where submitted results are stored
 LOG_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "log", "processed")  # Local directory to store processed log files
-SUMMARY_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "summary")  # Local directory to store summary JSON files
+SUMMARY_DIR = os.path.join(ROOT_DIR, "summary")  # Local directory to store summary JSON files
 
 # Ensure the summary directory exists
 if not os.path.exists(SUMMARY_DIR):
