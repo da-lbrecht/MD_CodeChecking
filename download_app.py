@@ -9,23 +9,37 @@ load_dotenv()
 S3_BUCKET = "many-daughters"
 S3_DIRECTORY_PATHS = ["stata/codes", "stata/results"]
 DOWNLOAD_DIRS = {
-    "stata/codes": "ManyDaughters_RT_AnalysisPackage/code",
-    "stata/results": "ManyDaughters_RT_AnalysisPackage/results"
+    "stata/codes": [
+        "ManyDaughters_RT_AnalysisPackage/code",
+        "ManyDaughters_PC_AnalysisPackage_95/code"
+    ],
+    "stata/results": [
+        "ManyDaughters_RT_AnalysisPackage/results",
+        "ManyDaughters_PC_AnalysisPackage_95/results"
+    ]
 }
 CHECKED_DIRS = {
-    "stata/codes": "ManyDaughters_RT_AnalysisPackage/code/checked",
-    "stata/results": "ManyDaughters_RT_AnalysisPackage/results/checked"
+    "stata/codes": [
+        "ManyDaughters_RT_AnalysisPackage/code/checked",
+        "ManyDaughters_PC_AnalysisPackage_95/code/checked"
+    ],
+    "stata/results": [
+        "ManyDaughters_RT_AnalysisPackage/results/checked",
+        "ManyDaughters_PC_AnalysisPackage_95/results/checked"
+    ]
 }
 S3_ACCESS_KEY_ID = os.getenv('S3_Access_Key_ID')  # Correctly retrieve the access key ID
 S3_SECRET_ACCESS_KEY = os.getenv('S3_Secret_Access_Key')  # Correctly retrieve the secret access key
 
 # Create local download and checked directories if they don't exist
-for directory in DOWNLOAD_DIRS.values():
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-for directory in CHECKED_DIRS.values():
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+for directories in DOWNLOAD_DIRS.values():
+    for directory in directories:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+for directories in CHECKED_DIRS.values():
+    for directory in directories:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
 # Initialize S3 client
 s3_client = boto3.client(
@@ -48,9 +62,10 @@ def list_s3_files(bucket, directory):
         return []
 
 # Function to download a file from S3
-def download_file_from_s3(bucket, key, download_path):
+def download_file_from_s3(bucket, key, download_paths):
     try:
-        s3_client.download_file(bucket, key, download_path)
+        for download_path in download_paths:
+            s3_client.download_file(bucket, key, download_path)
     except s3_client.exceptions.NoSuchKey:
         print(f"The specified key does not exist: {key}")
     except s3_client.exceptions.ClientError as e:
@@ -68,8 +83,8 @@ def download_files():
     try:
         for s3_directory_path in S3_DIRECTORY_PATHS:
             files = list_s3_files(S3_BUCKET, s3_directory_path)
-            download_dir = DOWNLOAD_DIRS[s3_directory_path]
-            checked_dir = CHECKED_DIRS[s3_directory_path]
+            download_dirs = DOWNLOAD_DIRS[s3_directory_path]
+            checked_dirs = CHECKED_DIRS[s3_directory_path]
             
             for file_key in files:
                 file_name = os.path.basename(file_key)
@@ -78,12 +93,19 @@ def download_files():
                 if s3_directory_path == "stata/results" and file_name.startswith("repro"):
                     continue
                 
-                # Check if the file already exists in the local directory or checked directory
-                local_file_path = os.path.join(download_dir, file_name)
-                checked_file_path = os.path.join(checked_dir, file_name)
-                if not os.path.exists(local_file_path) and not os.path.exists(checked_file_path):
+                # Check if the file already exists in the local directories or checked directories
+                file_exists = False
+                for download_dir, checked_dir in zip(download_dirs, checked_dirs):
+                    local_file_path = os.path.join(download_dir, file_name)
+                    checked_file_path = os.path.join(checked_dir, file_name)
+                    if os.path.exists(local_file_path) or os.path.exists(checked_file_path):
+                        file_exists = True
+                        break
+                
+                if not file_exists:
                     print(f"Downloading {file_name} from S3...")
-                    download_file_from_s3(S3_BUCKET, file_key, local_file_path)
+                    download_paths = [os.path.join(download_dir, file_name) for download_dir in download_dirs]
+                    download_file_from_s3(S3_BUCKET, file_key, download_paths)
                     if file_name.endswith('.do'):
                         do_files_downloaded += 1
                     elif file_name.endswith('.csv'):

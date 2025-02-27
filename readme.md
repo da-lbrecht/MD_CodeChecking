@@ -1,18 +1,17 @@
 # ManyDaughters Code Checking
 
 ## Project Description
-This project is designed to automate the process of downloading and executing STATA do-files, in order to check for potential errors during execution and for computational reproducibility of analysis results, and provides feedback by uploading checking results and logfiles to an AWS bucket. It consists of twelve main applications: download_app_5.py, stata_runner_app_5.py, log_process_app_5.py, repro_checker_app_5.py, upload_app_5.py, download_app_95.py, stata_runner_app_95.py, log_process_app_95.py, repro_checker_app_95.py, censoring_app_95.py, feedback_app.py, and upload_app_95.py.
+This project is designed to automate the process of downloading and executing STATA do-files, in order to check for potential errors during execution and for computational reproducibility of analysis results, and provides feedback by uploading checking results and logfiles to an AWS bucket. It consists of ten main applications: download_app.py, stata_runner_app_5.py, log_process_app_5.py, repro_checker_app_5.py, upload_app_5.py, stata_runner_app_95.py, log_process_app_95.py, repro_checker_app_95.py, censoring_app_95.py, feedback_app.py, and upload_app_95.py.
 
 ## Project Structure
 ```
 .env
 .gitignore
-download_app_5.py
+download_app.py
 stata_runner_app_5.py
 log_process_app_5.py
 repro_checker_app_5.py
 upload_app_5.py
-download_app_95.py
 stata_runner_app_95.py
 log_process_app_95.py
 repro_checker_app_95.py
@@ -72,14 +71,14 @@ requirements.txt
 
 ## Applications
 
-### Download App 5% (`download_app_5.py`)
+### Download App (`download_app.py`)
 
-This application downloads `.do` files from a specified AWS S3 bucket to check for computational reproducibility with the 5% data sample.
+This application downloads `.do` files and results from a specified AWS S3 bucket and saves them in two local locations: "ManyDaughters_RT_AnalysisPackage" and "ManyDaughters_PC_AnalysisPackage_95".
 
 #### Usage
 
 ```sh
-python download_app_5.py
+python download_app.py
 ```
 
 ### Stata Runner App 5% (`stata_runner_app_5.py`)
@@ -120,16 +119,6 @@ This application uploads results of the computational reproducibility test on th
 
 ```sh
 python upload_app_5.py
-```
-
-### Download App 95% (`download_app_95.py`)
-
-This application downloads `.do` files from a specified AWS S3 bucket to test for error-free executability on the 95% data sample.
-
-#### Usage
-
-```sh
-python download_app_95.py
 ```
 
 ### Stata Runner App 95% (`stata_runner_app_95.py`)
