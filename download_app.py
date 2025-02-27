@@ -13,33 +13,35 @@ DOWNLOAD_DIRS = {
         "ManyDaughters_RT_AnalysisPackage/code",
         "ManyDaughters_PC_AnalysisPackage_95/code"
     ],
-    "stata/results": [
-        "ManyDaughters_RT_AnalysisPackage/results",
-        "ManyDaughters_PC_AnalysisPackage_95/results"
-    ]
+    "stata/results": "ManyDaughters_RT_AnalysisPackage/results"
 }
 CHECKED_DIRS = {
     "stata/codes": [
         "ManyDaughters_RT_AnalysisPackage/code/checked",
         "ManyDaughters_PC_AnalysisPackage_95/code/checked"
     ],
-    "stata/results": [
-        "ManyDaughters_RT_AnalysisPackage/results/checked",
-        "ManyDaughters_PC_AnalysisPackage_95/results/checked"
-    ]
+    "stata/results": "ManyDaughters_RT_AnalysisPackage/results/checked"
 }
 S3_ACCESS_KEY_ID = os.getenv('S3_Access_Key_ID')  # Correctly retrieve the access key ID
 S3_SECRET_ACCESS_KEY = os.getenv('S3_Secret_Access_Key')  # Correctly retrieve the secret access key
 
 # Create local download and checked directories if they don't exist
 for directories in DOWNLOAD_DIRS.values():
-    for directory in directories:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+    if isinstance(directories, list):
+        for directory in directories:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+    else:
+        if not os.path.exists(directories):
+            os.makedirs(directories)
 for directories in CHECKED_DIRS.values():
-    for directory in directories:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+    if isinstance(directories, list):
+        for directory in directories:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+    else:
+        if not os.path.exists(directories):
+            os.makedirs(directories)
 
 # Initialize S3 client
 s3_client = boto3.client(
@@ -95,16 +97,25 @@ def download_files():
                 
                 # Check if the file already exists in the local directories or checked directories
                 file_exists = False
-                for download_dir, checked_dir in zip(download_dirs, checked_dirs):
-                    local_file_path = os.path.join(download_dir, file_name)
-                    checked_file_path = os.path.join(checked_dir, file_name)
+                if isinstance(download_dirs, list):
+                    for download_dir, checked_dir in zip(download_dirs, checked_dirs):
+                        local_file_path = os.path.join(download_dir, file_name)
+                        checked_file_path = os.path.join(checked_dir, file_name)
+                        if os.path.exists(local_file_path) or os.path.exists(checked_file_path):
+                            file_exists = True
+                            break
+                else:
+                    local_file_path = os.path.join(download_dirs, file_name)
+                    checked_file_path = os.path.join(checked_dirs, file_name)
                     if os.path.exists(local_file_path) or os.path.exists(checked_file_path):
                         file_exists = True
-                        break
                 
                 if not file_exists:
                     print(f"Downloading {file_name} from S3...")
-                    download_paths = [os.path.join(download_dir, file_name) for download_dir in download_dirs]
+                    if isinstance(download_dirs, list):
+                        download_paths = [os.path.join(download_dir, file_name) for download_dir in download_dirs]
+                    else:
+                        download_paths = [os.path.join(download_dirs, file_name)]
                     download_file_from_s3(S3_BUCKET, file_key, download_paths)
                     if file_name.endswith('.do'):
                         do_files_downloaded += 1
