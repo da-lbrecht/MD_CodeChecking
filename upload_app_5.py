@@ -43,7 +43,7 @@ def upload_to_s3(file_path, s3_key):
         elif file_name.endswith('_95%.log'):
             identifier = file_name.replace('_95%.log', '')
         elif file_name.endswith('_results.csv'):
-            identifier = file_name.replace('_results.csv', '')
+            identifier = file_name.replace('repro_', '').replace('_results.csv', '')
         elif file_name.endswith('.json'):
             identifier = file_name.replace('.json', '')
         else:
