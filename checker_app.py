@@ -6,7 +6,8 @@ import json
 ROOT_DIR = os.path.abspath(".")
 CSV_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "out")  # Local directory where results from the reproduction check are stored
 ORIG_RESULTS_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "results")  # Local directory where submitted results are stored
-LOG_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "log", "processed")  # Local directory to store processed log files
+LOG_DIR_RT = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "log", "processed")  # Local directory to store processed log files for RT
+LOG_DIR_PC = os.path.join(ROOT_DIR, "ManyDaughters_PC_AnalysisPackage_95", "log")  # Local directory to store log files for PC
 SUMMARY_DIR = os.path.join(ROOT_DIR, "summary")  # Local directory to store summary JSON files
 
 # Ensure the summary directory exists
@@ -39,8 +40,8 @@ def find_matching_pairs():
                 matching_pairs.append((repro_file_path, orig_file_path))
     return matching_pairs
 
-def check_log_file(log_file_name):
-    log_file_path = os.path.join(LOG_DIR, log_file_name)
+def check_log_file(log_file_name, log_dir):
+    log_file_path = os.path.join(log_dir, log_file_name)
     if os.path.exists(log_file_path):
         with open(log_file_path, 'r') as log_file:
             lines = log_file.readlines()
@@ -75,9 +76,11 @@ def main():
         result.update(comparison_results)
         results.append(result)
 
-        # Check log file for errors
-        log_file_name = orig_file_name.replace("_results.csv", "_5%.log")
-        succeeded_for_5_percent = check_log_file(log_file_name)
+        # Check log files for errors
+        log_file_name_5 = orig_file_name.replace("_results.csv", "_5%.log")
+        log_file_name_95 = orig_file_name.replace("_results.csv", "_95%.log")
+        succeeded_for_5_percent = check_log_file(log_file_name_5, LOG_DIR_RT)
+        succeeded_for_95_percent = check_log_file(log_file_name_95, LOG_DIR_PC)
 
         # Check if the results are reproduced
         reproduced = all(comparison_results.values())
@@ -85,7 +88,7 @@ def main():
         # Create summary JSON
         summary = {
             "succeededFor5Percent": succeeded_for_5_percent,
-            "succeededFor95Percent": None,
+            "succeededFor95Percent": succeeded_for_95_percent,
             "reproduced": reproduced
         }
 

@@ -48,7 +48,7 @@ def move_log_file_to_lib(log_file_path):
     print(f"Moved {log_file_path} to {new_path}")
 
 def main():
-    log_dir = 'ManyDaughters_RT_AnalysisPackage/log'
+    log_dir = 'ManyDaughters_PC_AnalysisPackage_95/log'
     censored_dir = os.path.join(log_dir, 'censored')
     os.makedirs(censored_dir, exist_ok=True)
     
