@@ -6,8 +6,8 @@ import json
 ROOT_DIR = os.path.abspath(".")
 CSV_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "out")  # Local directory where results from the reproduction check are stored
 ORIG_RESULTS_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "results")  # Local directory where submitted results are stored
-LOG_DIR_RT = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "log", "processed")  # Local directory to store processed log files for RT
-LOG_DIR_PC = os.path.join(ROOT_DIR, "ManyDaughters_PC_AnalysisPackage_95", "log")  # Local directory to store log files for PC
+LOG_DIR_RT = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "log", "processed")  # Local directory to store processed log files from 5% sample
+LOG_DIR_PC = os.path.join(ROOT_DIR, "ManyDaughters_PC_AnalysisPackage_95", "log", "censored")  # Local directory to store censored log files from 95% sample
 SUMMARY_DIR = os.path.join(ROOT_DIR, "summary")  # Local directory to store summary JSON files
 
 # Ensure the summary directory exists
