@@ -170,7 +170,7 @@ python upload_app.py
     python checker_app.py
     ```
 
-6. Upload files:
+7. Upload files:
     ```sh
     python upload_app.py
     ```
