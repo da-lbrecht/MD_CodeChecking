@@ -182,6 +182,16 @@ This application uploads the processed log files to a specified AWS S3 bucket.
 python upload_app_95.py
 ```
 
+### Upload App (`upload_app.py`)
+
+This application uploads log files from both "ManyDaughters_RT_AnalysisPackage/log/processed" and "ManyDaughters_PC_AnalysisPackage_95/log/censored", result files, and summary JSON files to a specified AWS S3 bucket. The `curl` command is executed only after uploading the summary JSON file.
+
+#### Usage
+
+```sh
+python upload_app.py
+```
+
 ## Execution Order
 
 1. Download files:
@@ -207,6 +217,11 @@ python upload_app_95.py
 5. Process log files for 95%:
     ```sh
     python log_process_app_95.py
+    ```
+
+6. Upload files:
+    ```sh
+    python upload_app.py
     ```
 
 ## License
