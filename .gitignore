@@ -26,4 +26,5 @@ ManyDaughters_PC_AnalysisPackage_95/
 # Ignore AWS related files for local use
 AWS_readme.md
 AWS_bucket_checker.py
+AWS_interactive_deleter.py
 
