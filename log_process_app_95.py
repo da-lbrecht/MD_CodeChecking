@@ -7,7 +7,7 @@ def process_log_file(input_path, output_path):
     error_lines = []
     
     for i in range(len(lines)):
-        if "r(" in lines[i]:
+        if lines[i].strip().startswith("r("):
             error_lines.append(str(i + 8))
     
     if error_lines:
@@ -25,12 +25,12 @@ def process_log_file(input_path, output_path):
         '\n'
     ]
     
-    result_lines = intro_lines + lines[:24]  # Add intro lines and keep the first 24 lines as is
+    result_lines = intro_lines + lines[:24]  # Add intro lines and keep all subsequent lines as is
     
     for i in range(24, len(lines)):
-        if lines[i].startswith(". *") or "r(" in lines[i] or \
-           (i + 1 < len(lines) and "r(" in lines[i + 1]) or \
-           (i + 2 < len(lines) and "r(" in lines[i + 2]):
+        if lines[i].startswith(". *") or lines[i].strip().startswith("r(") or \
+           (i + 1 < len(lines) and lines[i + 1].strip().startswith("r(")) or \
+           (i + 2 < len(lines) and lines[i + 2].strip().startswith("r(")):
             result_lines.append(lines[i])
         else:
             result_lines.append('\n')  # Blank the line
@@ -55,7 +55,7 @@ def main():
     for filename in os.listdir(log_dir):
         if filename.endswith('.log'):
             input_path = os.path.join(log_dir, filename)
-            output_filename = filename.replace('.log', '_95%.log')
+            output_filename = filename.replace('.log', '_censored.log')
             output_path = os.path.join(censored_dir, output_filename)
             process_log_file(input_path, output_path)
             move_log_file_to_lib(input_path)

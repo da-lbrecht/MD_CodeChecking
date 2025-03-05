@@ -25,7 +25,7 @@ def process_log_file(input_path, output_path):
         '\n'
     ]
     
-    result_lines = intro_lines + lines  # Add intro lines and keep all subsequent lines as is
+    result_lines = intro_lines + lines # Add intro lines and keep all subsequent lines as is
 
     with open(output_path, 'w') as outfile:
         outfile.writelines(result_lines)
