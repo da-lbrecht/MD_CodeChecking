@@ -55,7 +55,7 @@ def main():
     for filename in os.listdir(log_dir):
         if filename.endswith('.log'):
             input_path = os.path.join(log_dir, filename)
-            output_filename = filename.replace('.log', '_censored.log')
+            output_filename = filename.replace('.log', '_95%.log')
             output_path = os.path.join(censored_dir, output_filename)
             process_log_file(input_path, output_path)
             move_log_file_to_lib(input_path)
