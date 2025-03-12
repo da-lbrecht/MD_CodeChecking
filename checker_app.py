@@ -60,6 +60,17 @@ def move_files_to_checked(files, source_dir):
         os.rename(os.path.join(source_dir, file), os.path.join(checked_dir, file))
         print(f"Moved {file} to {checked_dir}")
 
+def move_repro_files_to_lib():
+    lib_dir = os.path.join(CSV_DIR_PC, "lib")
+    if not os.path.exists(lib_dir):
+        os.makedirs(lib_dir)
+    for file_name in os.listdir(CSV_DIR_PC):
+        if file_name.startswith("repro"):
+            file_path = os.path.join(CSV_DIR_PC, file_name)
+            new_path = os.path.join(lib_dir, file_name)
+            os.rename(file_path, new_path)
+            print(f"Moved {file_name} to {lib_dir}")
+
 def main():
     matching_pairs = find_matching_pairs()
     results = []
@@ -108,10 +119,8 @@ def main():
     move_files_to_checked(repro_files, CSV_DIR)
     move_files_to_checked(orig_files, ORIG_RESULTS_DIR)
 
-    # Move repro results from 95% sample to the "lib" subfolder
-    repro_files_pc = [file for file in os.listdir(CSV_DIR_PC) if file.startswith("repro_") and file.endswith(".csv")]
-    move_files_to_checked(repro_files_pc, CSV_DIR_PC)
-    
+    # Move repro files to lib subfolder
+    move_repro_files_to_lib()
 
 if __name__ == "__main__":
     main()
