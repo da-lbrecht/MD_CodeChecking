@@ -1,8 +1,13 @@
 import subprocess
+import os
+import sys
 
 def run_script(script_name):
     try:
-        result = subprocess.run(["python", script_name], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Activate the virtual environment and run the script
+        activate_venv = os.path.join(os.path.dirname(sys.executable), 'activate')
+        command = f"{activate_venv} && python {script_name}"
+        result = subprocess.run(command, shell=True, check=True)
         print(f"Executed {script_name} successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error executing {script_name}: {e}")
@@ -19,7 +24,16 @@ def main():
     ]
 
     for script in scripts:
-        run_script(script)
+        while True:
+            user_input = input(f"Do you want to run {script}? (y/n): ").strip().lower()
+            if user_input == 'y':
+                run_script(script)
+                break
+            elif user_input == 'n':
+                print(f"Skipping {script}.")
+                break
+            else:
+                print("Invalid input. Please type 'y' to run the script or 'n' to skip.")
 
 if __name__ == "__main__":
     main()

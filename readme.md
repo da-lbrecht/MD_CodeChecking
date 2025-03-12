@@ -1,7 +1,7 @@
 # ManyDaughters Code Checking
 
 ## Project Description
-This project is designed to automate the process of downloading and executing STATA do-files, in order to check for potential errors during execution and for computational reproducibility of analysis results, and provides feedback by uploading checking results and logfiles to an AWS bucket. It consists of seven main applications: download_app.py, stata_runner_app_5.py, stata_runner_app_95.py, log_process_app_5.py,log_process_app_95.py, checker_app.py, upload_app.py.
+This project is designed to automate the process of downloading and executing STATA do-files, in order to check for potential errors during execution and for computational reproducibility of analysis results, and provides feedback by uploading checking results and logfiles to an AWS bucket. It consists of seven main applications: download_app.py, stata_runner_app_5.py, stata_runner_app_95.py, log_process_app_5.py, log_process_app_95.py, checker_app.py, upload_app.py.
 
 ## Project Structure
 ```
@@ -15,6 +15,7 @@ upload_app.py
 stata_runner_app_95.py
 log_process_app_95.py
 upload_app.py
+run_all.py
 ManyDaughters_RT_AnalysisPackage/
     code/
         checked/
@@ -130,12 +131,22 @@ python checker_app.py
 
 ### Upload App (`upload_app.py`)
 
-This application uploads reproduced results, log files , and summary JSON files to a specified AWS S3 bucket. 
+This application uploads reproduced results, log files, and summary JSON files to a specified AWS S3 bucket.
 
 #### Usage
 
 ```sh
 python upload_app.py
+```
+
+### Run All (`run_all.py`)
+
+This wrapper script runs all the above applications in the correct order.
+
+#### Usage
+
+```sh
+python run_all.py
 ```
 
 ## Execution Order
@@ -174,6 +185,12 @@ python upload_app.py
     ```sh
     python upload_app.py
     ```
+
+Alternatively, you can run all the above steps using the `run_all.py` script:
+
+```sh
+python run_all.py
+```
 
 ## License
 

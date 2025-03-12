@@ -10,7 +10,7 @@ def process_log_file(input_path, output_path):
     for i in range(len(lines)):
         if lines[i].strip().startswith("r("):
             error_lines.append(str(i + 8))
-        elif lines[i].strip().startswith("cap"):
+        elif lines[i].strip().startswith("cap") or lines[i].strip().startswith("capture"):
             cap_lines.append(str(i + 8))
     
     if error_lines:
