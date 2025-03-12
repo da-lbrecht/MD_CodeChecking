@@ -5,6 +5,7 @@ import json
 # Constants
 ROOT_DIR = os.path.abspath(".")
 CSV_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "out")  # Local directory where results from the reproduction check are stored
+CSV_DIR_PC = os.path.join(ROOT_DIR, "ManyDaughters_PC_AnalysisPackage_95", "out")  # Local directory where results from the 95% sample are stored
 ORIG_RESULTS_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "results")  # Local directory where submitted results are stored
 LOG_DIR_RT = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "log", "processed")  # Local directory to store processed log files from 5% sample
 LOG_DIR_PC = os.path.join(ROOT_DIR, "ManyDaughters_PC_AnalysisPackage_95", "log", "censored")  # Local directory to store censored log files from 95% sample
@@ -106,6 +107,11 @@ def main():
     orig_files = [os.path.basename(pair[1]) for pair in matching_pairs]
     move_files_to_checked(repro_files, CSV_DIR)
     move_files_to_checked(orig_files, ORIG_RESULTS_DIR)
+
+    # Move repro results from 95% sample to the "lib" subfolder
+    repro_files_pc = [file for file in os.listdir(CSV_DIR_PC) if file.startswith("repro_") and file.endswith(".csv")]
+    move_files_to_checked(repro_files_pc, CSV_DIR_PC)
+    
 
 if __name__ == "__main__":
     main()
