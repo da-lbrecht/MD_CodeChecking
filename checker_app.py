@@ -32,12 +32,11 @@ def compare_csv(file1, file2):
 
 def find_matching_pairs():
     matching_pairs = []
-    for file_name in os.listdir(CSV_DIR):
-        if file_name.startswith("repro_") and file_name.endswith(".csv"):
-            orig_file_name = file_name[len("repro_"):]
-            orig_file_path = os.path.join(ORIG_RESULTS_DIR, orig_file_name)
-            repro_file_path = os.path.join(CSV_DIR, file_name)
-            if os.path.exists(orig_file_path):
+    for file_name in os.listdir(ORIG_RESULTS_DIR):
+        if file_name.endswith("_results.csv"):
+            orig_file_path = os.path.join(ORIG_RESULTS_DIR, file_name)
+            repro_file_path = os.path.join(CSV_DIR, f"repro_{file_name}")
+            if os.path.exists(repro_file_path):
                 matching_pairs.append((repro_file_path, orig_file_path))
     return matching_pairs
 
@@ -77,20 +76,14 @@ def main():
         result.update(comparison_results)
         results.append(result)
 
-        # Check log files for errors
-        log_file_name_5 = orig_file_name.replace("_results.csv", "_5%.log")
-        log_file_name_95 = orig_file_name.replace("_results.csv", "_95%.log")
-        succeeded_for_5_percent = check_log_file(log_file_name_5, LOG_DIR_RT)
-        succeeded_for_95_percent = check_log_file(log_file_name_95, LOG_DIR_PC)
-
         # Check if the results are reproduced
         reproduced = all(comparison_results.values())
 
         # Create summary JSON
         summary = {
-            "succeededFor5Percent": succeeded_for_5_percent,
-            "succeededFor95Percent": succeeded_for_95_percent,
-            "reproduced": reproduced
+            "reproduced": reproduced,
+            "succeededFor5Percent": None,
+            "succeededFor95Percent": None
         }
 
         # Save summary JSON
@@ -102,16 +95,42 @@ def main():
 
     print(f"Total number of matched files: {len(matching_pairs)}")
 
-    # Move files to the "checked" subfolder
-    repro_files = [os.path.basename(pair[0]) for pair in matching_pairs]
-    orig_files = [os.path.basename(pair[1]) for pair in matching_pairs]
+    # Check log files for errors for all log files
+    for file_name in os.listdir(ORIG_RESULTS_DIR):
+        log_file_name_5 = file_name.replace("_results.csv", "_5%.log")
+        log_file_name_95 = file_name.replace("_results.csv", "_95%.log")
+        succeeded_for_5_percent = check_log_file(log_file_name_5, LOG_DIR_RT)
+        succeeded_for_95_percent = check_log_file(log_file_name_95, LOG_DIR_PC)
+
+        # Create or update summary JSON
+        summary_file_name = file_name.replace("_results.csv", ".json")
+        summary_file_path = os.path.join(SUMMARY_DIR, summary_file_name)
+        if os.path.exists(summary_file_path):
+            with open(summary_file_path, 'r') as summary_file:
+                summary = json.load(summary_file)
+        else:
+            summary = {
+                "reproduced": False,
+                "succeededFor5Percent": None,
+                "succeededFor95Percent": None
+            }
+        summary["succeededFor5Percent"] = succeeded_for_5_percent
+        summary["succeededFor95Percent"] = succeeded_for_95_percent
+        with open(summary_file_path, 'w') as summary_file:
+            json.dump(summary, summary_file, indent=4)
+        print(f"Updated summary saved to {summary_file_path}")
+
+    # Move all repro files to the "checked" subfolder
+    repro_files = [file for file in os.listdir(CSV_DIR) if file.startswith("repro_") and file.endswith(".csv")]
     move_files_to_checked(repro_files, CSV_DIR)
+
+    # Move all orig files to the "checked" subfolder
+    orig_files = [file for file in os.listdir(ORIG_RESULTS_DIR) if file.endswith("_results.csv")]
     move_files_to_checked(orig_files, ORIG_RESULTS_DIR)
 
     # Move repro results from 95% sample to the "lib" subfolder
     repro_files_pc = [file for file in os.listdir(CSV_DIR_PC) if file.startswith("repro_") and file.endswith(".csv")]
     move_files_to_checked(repro_files_pc, CSV_DIR_PC)
-    
 
 if __name__ == "__main__":
     main()
