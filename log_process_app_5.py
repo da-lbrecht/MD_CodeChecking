@@ -5,13 +5,18 @@ def process_log_file(input_path, output_path):
         lines = infile.readlines()
     
     error_lines = []
+    cap_lines = []
     
     for i in range(len(lines)):
-        if "r(" in lines[i]:
+        if lines[i].strip().startswith("r("):
             error_lines.append(str(i + 8))
+        elif lines[i].strip().startswith("cap"):
+            cap_lines.append(str(i + 8))
     
     if error_lines:
         error_message = f"ATTENTION: RUNNING YOUR do-file PRODUCES ERRORS, see lines {', '.join(error_lines)}.\n"
+    elif cap_lines:
+        error_message = f"ATTENTION: It appears as if you use a cap or capture command. We cannot verify, whether your script runs without errors., see lines {', '.join(cap_lines)}.\n"
     else:
         error_message = "Your do-file runs without errors.\n"
     
@@ -25,7 +30,7 @@ def process_log_file(input_path, output_path):
         '\n'
     ]
     
-    result_lines = intro_lines + lines # Add intro lines and keep all subsequent lines as is
+    result_lines = intro_lines + lines  # Add intro lines and keep all subsequent lines as is
 
     with open(output_path, 'w') as outfile:
         outfile.writelines(result_lines)
