@@ -8,7 +8,9 @@ def run_script(script_name):
         # Load environment variables from the .env file
         load_dotenv()
 
-        result = subprocess.run(["python", script_name], check=True)
+        # Use the Python interpreter from the virtual environment
+        python_executable = sys.executable
+        result = subprocess.run([python_executable, script_name], check=True, env=os.environ.copy())
         print(f"Executed {script_name} successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error executing {script_name}: {e}")
