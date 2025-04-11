@@ -15,16 +15,48 @@ SUMMARY_DIR = os.path.join(ROOT_DIR, "summary")  # Local directory to store summ
 if not os.path.exists(SUMMARY_DIR):
     os.makedirs(SUMMARY_DIR)
 
+def round_csv_numbers():
+    """
+    Round numbers in all CSV files in CSV_DIR.
+    Numbers are rounded to 6 digits past the decimal point, but if this results in 6 zeros,
+    they are rounded to more digits to ensure at least one non-zero digit after the decimal point.
+    The rounded numbers are always reported with 6 digits after the decimal point, avoiding scientific notation.
+    """
+    for file_name in os.listdir(CSV_DIR):
+        if file_name.endswith(".csv"):
+            file_path = os.path.join(CSV_DIR, file_name)
+            print(f"Processing file: {file_path}")
+            try:
+                df = pd.read_csv(file_path)
+                for column in df.select_dtypes(include=['float']):
+                    df[column] = df[column].apply(
+                        lambda x: f"{x:.6f}" if round(x, 6) != 0 else f"{x:.15f}".rstrip('0').ljust(8, '0')
+                    )
+                df.to_csv(file_path, index=False)
+                print(f"Rounded numbers in {file_name} and saved.")
+            except Exception as e:
+                print(f"Error processing {file_name}: {e}")
+
 def compare_csv(file1, file2):
-    # Read the CSV files
+    """
+    Compare two CSV files column by column, considering only digits unaffected by rounding.
+    """
     df1 = pd.read_csv(file1)
     df2 = pd.read_csv(file2)
 
-    # Compare the dataframes column by column
+    # Ensure both dataframes have the same columns
+    if set(df1.columns) != set(df2.columns):
+        raise ValueError("The two CSV files have different columns and cannot be compared.")
+
     comparison_results = {}
     for column in df1.columns:
         if column in df2.columns:
-            comparison_results[f"identical_{column}"] = df1[column].equals(df2[column])
+            if pd.api.types.is_numeric_dtype(df1[column]) and pd.api.types.is_numeric_dtype(df2[column]):
+                # Compare rounded values to 6 decimal places
+                comparison_results[f"identical_{column}"] = df1[column].round(6).equals(df2[column].round(6))
+            else:
+                # Compare non-numeric columns directly
+                comparison_results[f"identical_{column}"] = df1[column].equals(df2[column])
         else:
             comparison_results[f"identical_{column}"] = False
 
@@ -60,6 +92,9 @@ def move_files_to_checked(files, source_dir):
         print(f"Moved {file} to {checked_dir}")
 
 def main():
+    # Execute the new functionality first
+    round_csv_numbers()
+
     matching_pairs = find_matching_pairs()
     results = []
 
