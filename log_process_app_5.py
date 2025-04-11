@@ -14,9 +14,9 @@ def process_log_file(input_path, output_path):
             cap_lines.append(str(i + 8))
 
     if error_lines:
-        error_message = f"ATTENTION: RUNNING YOUR do-file PRODUCES ERRORS, see lines {', '.join(error_lines)}.\n"
+        error_message = f"ATTENTION: RUNNING YOUR do-file PRODUCES ERRORS, see line(s) {', '.join(error_lines)}.\n"
     elif cap_lines:
-        error_message = f"ATTENTION: It appears as if you use a cap or capture command. We cannot verify, whether your script runs without errors, see lines {', '.join(cap_lines)}.\n"
+        error_message = f"ATTENTION: It appears as if you use a cap or capture command. We cannot verify, whether your script runs without errors, see line(s) {', '.join(cap_lines)}.\n"
     else:
         error_message = "Your do-file runs without errors.\n"
     
