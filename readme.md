@@ -1,7 +1,7 @@
 # ManyDaughters Code Checking
 
 ## Project Description
-This project is designed to automate the process of downloading and executing STATA do-files, in order to check for potential errors during execution and for computational reproducibility of analysis results, and provides feedback by uploading checking results and logfiles to an AWS bucket. It consists of seven main applications: download_app.py, stata_runner_app_5.py, stata_runner_app_95.py, log_process_app_5.py, log_process_app_95.py, checker_app.py, upload_app.py.
+This project accompanies the #ManyDaughters many-analyst research project. It is designed to automate the process of downloading and executing STATA do-files submitted by participating research teams, in order to check for potential errors during execution and for computational reproducibility of analysis results, and provides feedback by uploading checked results and logfiles to an AWS bucket. It consists of seven main applications: download_app.py, stata_runner_app_5.py, stata_runner_app_95.py, log_process_app_5.py, log_process_app_95.py, checker_app.py, upload_app.py.
 
 ## Project Structure
 ```
