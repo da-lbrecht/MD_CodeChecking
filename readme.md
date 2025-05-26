@@ -71,6 +71,16 @@ requirements.txt
 
 ## Applications
 
+### Run All (`run_all.py`)
+
+This wrapper script runs all the above applications in the correct order.
+
+#### Usage
+
+```sh
+python run_all.py
+```
+
 ### Download App (`download_app.py`)
 
 This application downloads `.do` files and results from a specified AWS S3 bucket. The `.do` files are saved in both "ManyDaughters_RT_AnalysisPackage" and "ManyDaughters_PC_AnalysisPackage_95" folders, while the results are saved in the "ManyDaughters_RT_AnalysisPackage" folder.
@@ -139,16 +149,6 @@ This application uploads reproduced results, log files, and summary JSON files t
 
 ```sh
 python upload_app.py
-```
-
-### Run All (`run_all.py`)
-
-This wrapper script runs all the above applications in the correct order.
-
-#### Usage
-
-```sh
-python run_all.py
 ```
 
 ## Execution Order
