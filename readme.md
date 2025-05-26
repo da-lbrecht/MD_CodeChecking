@@ -1,7 +1,9 @@
 # ManyDaughters Code Checking
 
 ## Project Description
-This project accompanies the #ManyDaughters many-analyst research project. It is designed to automate the process of downloading and executing STATA do-files submitted by participating research teams, in order to check for potential errors during execution and for computational reproducibility of analysis results, and provides feedback by uploading checked results and logfiles to an AWS bucket. It consists of seven main applications: download_app.py, stata_runner_app_5.py, stata_runner_app_95.py, log_process_app_5.py, log_process_app_95.py, checker_app.py, upload_app.py.
+This project supports the #ManyDaughters many-analyst research initiative. It automates the tasks of downloading and executing STATA do-files from participating research teams, checking for execution errors as well as ensuring the computational reproducibility of analysis results. After processing, it uploads the verified results and logs to an AWS bucket. This system encompasses seven core applications: `download_app.py`, `stata_runner_app_5.py`, `stata_runner_app_95.py`, `log_process_app_5.py`, `log_process_app_95.py`, `checker_app.py`, and `upload_app.py`.
+
+For ease of use, `run_all.py` is provided as the default script to sequentially execute all tasks efficiently. Alternatively, users can run each application separately as needed.
 
 ## Project Structure
 ```
@@ -143,11 +145,19 @@ python upload_app.py
 
 This wrapper script runs all the above applications in the correct order.
 
+```sh
+python run_all.py
+```
+
 #### Usage
+
+Users you can run all the steps of the code checking procedure using the `run_all.py` script:
 
 ```sh
 python run_all.py
 ```
+
+Alternatively, you can run each application separately as needed.
 
 ## Execution Order
 
@@ -185,12 +195,6 @@ python run_all.py
     ```sh
     python upload_app.py
     ```
-
-Alternatively, you can run all the above steps using the `run_all.py` script:
-
-```sh
-python run_all.py
-```
 
 ## License
 
