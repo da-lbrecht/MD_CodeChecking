@@ -145,11 +145,13 @@ python upload_app.py
 
 This wrapper script runs all the above applications in the correct order.
 
+#### Usage
+
 ```sh
 python run_all.py
 ```
 
-## Usage
+## Execution Order
 
 Users you can run all the steps of the code checking procedure using the `run_all.py` script:
 
@@ -158,8 +160,6 @@ python run_all.py
 ```
 
 Alternatively, you can run each application separately as needed.
-
-## Execution Order
 
 1. Download files:
     ```sh
