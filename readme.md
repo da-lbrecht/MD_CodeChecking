@@ -149,7 +149,7 @@ This wrapper script runs all the above applications in the correct order.
 python run_all.py
 ```
 
-#### Usage
+## Usage
 
 Users you can run all the steps of the code checking procedure using the `run_all.py` script:
 
