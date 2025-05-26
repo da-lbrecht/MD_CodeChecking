@@ -153,7 +153,7 @@ python run_all.py
 
 ## Execution Order
 
-Users you can run all the steps of the code checking procedure using the `run_all.py` script:
+You can run all the steps of the code checking procedure using the `run_all.py` script:
 
 ```sh
 python run_all.py
