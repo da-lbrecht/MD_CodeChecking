@@ -23,6 +23,9 @@ ManyDaughters_RT_AnalysisPackage/
 # Ignore ManyDaughters_PC_AnalysisPackage
 ManyDaughters_PC_AnalysisPackage_95/
 
+# Ignore PAPs
+ManyDaughters_RT_PAPs
+
 # Ignore summary of code checking results
 summary/
 

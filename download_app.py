@@ -7,20 +7,22 @@ load_dotenv()
 
 # Constants
 S3_BUCKET = "many-daughters"
-S3_DIRECTORY_PATHS = ["stata/codes", "stata/results"]
+S3_DIRECTORY_PATHS = ["stata/codes", "stata/results", "pre-analysis"]
 DOWNLOAD_DIRS = {
     "stata/codes": [
         "ManyDaughters_RT_AnalysisPackage/code",
         "ManyDaughters_PC_AnalysisPackage_95/code"
     ],
-    "stata/results": "ManyDaughters_RT_AnalysisPackage/results"
+    "stata/results": "ManyDaughters_RT_AnalysisPackage/results",
+    "pre-analysis": "ManyDaughters_RT_PAPs" 
 }
 CHECKED_DIRS = {
     "stata/codes": [
         "ManyDaughters_RT_AnalysisPackage/code/checked",
-        "ManyDaughters_PC_AnalysisPackage_95/code/checked"
+        "ManyDaughters_PC_AnalysisPackage_95/code/checked",
     ],
-    "stata/results": "ManyDaughters_RT_AnalysisPackage/results/checked"
+    "stata/results": "ManyDaughters_RT_AnalysisPackage/results/checked",
+    "pre-analysis": "ManyDaughters_RT_PAPs" 
 }
 S3_ACCESS_KEY_ID = os.getenv('S3_Access_Key_ID')  # Correctly retrieve the access key ID
 S3_SECRET_ACCESS_KEY = os.getenv('S3_Secret_Access_Key')  # Correctly retrieve the secret access key
@@ -79,6 +81,7 @@ def download_file_from_s3(bucket, key, download_paths):
         print(f"An error occurred while downloading {key}: {e}")
 
 def download_files():
+    PAPs_downloaded = 0
     do_files_downloaded = 0
     csv_files_downloaded = 0
     
@@ -121,10 +124,12 @@ def download_files():
                         do_files_downloaded += 1
                     elif file_name.endswith('.csv'):
                         csv_files_downloaded += 1
+                    elif file_name.endswith('.pdf'):
+                        PAPs_downloaded += 1
                 else:
                     print(f"{file_name} already exists. Skipping download.")
 
-        print(f"Download complete. {do_files_downloaded} do-files and {csv_files_downloaded} csv-files downloaded.")
+        print(f"Download complete. {PAPs_downloaded} PAPs, {do_files_downloaded} do-files and {csv_files_downloaded} csv-files downloaded.")
         
     except Exception as e:
         print(f"An error occurred: {e}")
