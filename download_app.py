@@ -97,6 +97,10 @@ def download_files():
                 # Skip files starting with "repro" in the "stata/results" directory
                 if s3_directory_path == "stata/results" and file_name.startswith("repro"):
                     continue
+
+                # Skip files starting with "latest_" in the "pre-analysis" directory
+                if s3_directory_path == "pre-analysis" and file_name.startswith("latest_"):
+                    continue
                 
                 # Check if the file already exists in the local directories or checked directories
                 file_exists = False
@@ -118,13 +122,17 @@ def download_files():
                     if isinstance(download_dirs, list):
                         download_paths = [os.path.join(download_dir, file_name) for download_dir in download_dirs]
                     else:
-                        download_paths = [os.path.join(download_dirs, file_name)]
+                        # If pre-analysis, append .pdf to the filename
+                        if s3_directory_path == "pre-analysis":
+                            download_paths = [os.path.join(download_dirs, file_name + ".pdf")]
+                        else:
+                            download_paths = [os.path.join(download_dirs, file_name)]
                     download_file_from_s3(S3_BUCKET, file_key, download_paths)
                     if file_name.endswith('.do'):
                         do_files_downloaded += 1
                     elif file_name.endswith('.csv'):
                         csv_files_downloaded += 1
-                    elif file_name.endswith('.pdf'):
+                    elif s3_directory_path == "pre-analysis":
                         PAPs_downloaded += 1
                 else:
                     print(f"{file_name} already exists. Skipping download.")
