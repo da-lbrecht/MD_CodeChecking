@@ -112,8 +112,11 @@ def download_files():
                             file_exists = True
                             break
                 else:
-                    local_file_path = os.path.join(download_dirs, file_name)
-                    checked_file_path = os.path.join(checked_dirs, file_name)
+                    if s3_directory_path == "pre-analysis":
+                        local_file_path = os.path.join(download_dirs, file_name + ".pdf")
+                    else:
+                        local_file_path = os.path.join(download_dirs, file_name)
+                        checked_file_path = os.path.join(checked_dirs, file_name)
                     if os.path.exists(local_file_path) or os.path.exists(checked_file_path):
                         file_exists = True
                 
