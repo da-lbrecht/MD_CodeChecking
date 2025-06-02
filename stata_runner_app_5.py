@@ -2,6 +2,8 @@ import os
 import subprocess
 from dotenv import load_dotenv
 
+from stata_runner_app_95 import STATA_EXECUTABLE
+
 # Load environment variables from the .env file
 load_dotenv()
 
@@ -10,7 +12,8 @@ ROOT_DIR = os.path.abspath(".")
 DOWNLOAD_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "code")  # Local directory to store downloaded files
 LOG_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "log")  # Local directory to store log files
 CSV_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage", "out")  # Local directory to store results
-STATA_EXECUTABLE = "M:/applications/STATA17/StataMP-64.exe"
+# STATA_EXECUTABLE = "M:/applications/STATA17/StataMP-64.exe"
+STATA_EXECUTABLE = "C:/Program Files/StataNow19/StataMP-64.exe"
 ANALYSIS_PACKAGE_DIR = os.path.join(ROOT_DIR, "ManyDaughters_RT_AnalysisPackage")  # Relative path inside ROOT_DIR
 
 EXECUTED_DIR = os.path.join(DOWNLOAD_DIR, "checked")  # Subfolder for executed files
