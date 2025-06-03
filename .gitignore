@@ -29,8 +29,9 @@ ManyDaughters_RT_PAPs
 # Ignore summary of code checking results
 summary/
 
-# Ignore AWS related files for local use
+# Ignore AWS related files for local use and local syncing apps
 AWS_readme.md
 AWS_bucket_checker.py
 AWS_interactive_deleter.py
+local_sync_app.py
 
