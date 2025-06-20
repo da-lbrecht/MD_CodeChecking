@@ -1,7 +1,7 @@
 import os
 
 def process_log_file(input_path, output_path):
-    with open(input_path, 'r') as infile:
+    with open(input_path, 'r', encoding='utf-8', errors='replace') as infile:
         lines = infile.readlines()
     
     error_lines = []
@@ -32,7 +32,7 @@ def process_log_file(input_path, output_path):
     
     result_lines = intro_lines + lines  # Add intro lines and keep all subsequent lines as is
 
-    with open(output_path, 'w') as outfile:
+    with open(output_path, 'w', encoding='utf-8') as outfile:
         outfile.writelines(result_lines)
     print(f"Created processed log file: {output_path}")
 

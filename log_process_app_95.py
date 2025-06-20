@@ -1,7 +1,7 @@
 import os
 
 def process_log_file(input_path, output_path):
-    with open(input_path, 'r') as infile:
+    with open(input_path, 'r', encoding='utf-8', errors='replace') as infile:
         lines = infile.readlines()
     
     error_lines = []

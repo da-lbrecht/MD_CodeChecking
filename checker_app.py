@@ -75,7 +75,7 @@ def find_matching_pairs():
 def check_log_file(log_file_name, log_dir):
     log_file_path = os.path.join(log_dir, log_file_name)
     if os.path.exists(log_file_path):
-        with open(log_file_path, 'r') as log_file:
+        with open(log_file_path, 'r', encoding='utf-8', errors='replace') as log_file:
             lines = log_file.readlines()
             if len(lines) > 5 and "Your do-file runs without errors." in lines[5]:
                 return True
