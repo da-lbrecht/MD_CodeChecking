@@ -26,6 +26,9 @@ ManyDaughters_PC_AnalysisPackage_95/
 # Ignore PAPs
 ManyDaughters_RT_PAPs
 
+# Ignore ManualChecks
+ManualChecks
+
 # Ignore summary of code checking results
 summary/
 
@@ -35,4 +38,5 @@ AWS_bucket_checker.py
 AWS_interactive_deleter.py
 local_sync_app.py
 PAP_latest.py
+
 
