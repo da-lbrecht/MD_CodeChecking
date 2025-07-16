@@ -40,7 +40,7 @@ def process_log_file(input_path, output_path):
         else:
             result_lines.append('\n')  # Blank the line
     
-    with open(output_path, 'w') as outfile:
+    with open(output_path, 'w', encoding='utf-8') as outfile:
         outfile.writelines(result_lines)
     print(f"Created censored log file: {output_path}")
 
