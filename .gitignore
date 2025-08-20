@@ -38,5 +38,7 @@ AWS_bucket_checker.py
 AWS_interactive_deleter.py
 local_sync_app.py
 PAP_latest.py
+results95_sync.py
+dofiles95_sync.py
 
 
