@@ -40,5 +40,6 @@ local_sync_app.py
 PAP_latest.py
 results95_sync.py
 dofiles95_sync.py
+logfiles95_sync.py
 
 
