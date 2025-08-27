@@ -41,5 +41,7 @@ PAP_latest.py
 results95_sync.py
 dofiles95_sync.py
 logfiles95_sync.py
-
+logfiles5_sync.py
+results5_sync.py
+PAP_PeerAssessment_sync.py
 
